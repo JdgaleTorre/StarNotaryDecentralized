@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "prettier": "prettier --write 'contracts/**/*.sol'"
+  },
+  "devDependencies": {
+    "prettier": "^2.3.2",
+    "prettier-plugin-solidity": "^1.0.0-beta.13"
+  },
+  "dependencies": {
+    "openzeppelin-solidity": "^4.2.0"
+  }
+}
