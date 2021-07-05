@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 //Importing openzeppelin-solidity ERC-721 implemented Standard
@@ -13,6 +14,7 @@ contract StarNotary is ERC721 {
   // Implement Task 1 Add a name and symbol properties
   // name: Is a short name to your token
   // symbol: Is a short string like 'USD' -> 'American Dollar'
+  constructor() ERC721("Gale's Star Notary", "GSN") {}
 
   // mapping the Star with the Owner Address
   mapping(uint256 => Star) public tokenIdToStarInfo;
@@ -38,7 +40,7 @@ contract StarNotary is ERC721 {
 
   // Function that allows you to convert an address into a payable address
   function _make_payable(address x) internal pure returns (address payable) {
-    return address(uint160(x));
+    return payable(address(uint160(x)));
   }
 
   function buyStar(uint256 _tokenId) public payable {
@@ -46,11 +48,13 @@ contract StarNotary is ERC721 {
     uint256 starCost = starsForSale[_tokenId];
     address ownerAddress = ownerOf(_tokenId);
     require(msg.value > starCost, "You need to have enough Ether");
+    approve(msg.sender, _tokenId, ownerAddress);
     safeTransferFrom(ownerAddress, msg.sender, _tokenId);
     address payable ownerAddressPayable = _make_payable(ownerAddress);
     ownerAddressPayable.transfer(starCost);
     if (msg.value > starCost) {
-      msg.sender.transfer(msg.value - starCost);
+      address payable senderAddress = _make_payable(msg.sender);
+      senderAddress.transfer(msg.value - starCost);
     }
   }
 
@@ -61,6 +65,7 @@ contract StarNotary is ERC721 {
     returns (string memory)
   {
     //1. You should return the Star saved in tokenIdToStarInfo mapping
+    return tokenIdToStarInfo[_tokenId].name;
   }
 
   // Implement Task 1 Exchange Stars function
@@ -69,11 +74,28 @@ contract StarNotary is ERC721 {
     //2. You don't have to check for the price of the token (star)
     //3. Get the owner of the two tokens (ownerOf(_tokenId1), ownerOf(_tokenId1)
     //4. Use _transferFrom function to exchange the tokens.
+    address ownerOfStar1 = ownerOf(_tokenId1);
+    address ownerOfStar2 = ownerOf(_tokenId2);
+    require(
+      ownerOfStar1 == msg.sender || ownerOfStar2 == msg.sender,
+      "To exchange a Star, you have to be the owner of one of them"
+    );
+
+    approve(ownerOfStar2, _tokenId1, ownerOfStar1);
+    approve(ownerOfStar1, _tokenId2, ownerOfStar2);
+
+    safeTransferFrom(ownerOfStar1, ownerOfStar2, _tokenId1);
+    safeTransferFrom(ownerOfStar2, ownerOfStar1, _tokenId2);
   }
 
   // Implement Task 1 Transfer Stars
   function transferStar(address _to1, uint256 _tokenId) public {
     //1. Check if the sender is the ownerOf(_tokenId)
     //2. Use the transferFrom(from, to, tokenId); function to transfer the Star
+    require(
+      ownerOf(_tokenId) == msg.sender,
+      "You have to be the owner of the Star"
+    );
+    safeTransferFrom(msg.sender, _to1, _tokenId);
   }
 }
