@@ -1,11 +1,11 @@
 # Important
 
-Token Name: Gale's Star Notary
-Token Symbol: GSN
-Contract Token: 0x0CF66988FADD6c9c4618479c8F190870abd96330
+- **Token Name**: Gale's Star Notary
+- **Token Symbol**: GSN
+- **Contract Token**: 0x0CF66988FADD6c9c4618479c8F190870abd96330
 
-Truffle Version: v5.3.13
-Openzeppelin: ^4.2.0
+- **Truffle Version**: v5.3.13
+- **Openzeppelin**: ^4.2.0
 
 # ND1309 C2 Ethereum Smart Contracts, Tokens and Dapps - Project Starter
 
